@@ -20,8 +20,8 @@ df['Comments'] = df['Vos remarques et commentaires relatifs à votre insertion p
 # Supprimer la ponctuation
 df['Comments'] = df['Comments'].str.replace(r'[^\w\s]', '')
 
+# Remplacer les valeurs NaN par des chaînes de caractères vides
 df['Comments'] = df['Comments'].fillna('')
-
 
 # Tokenization
 df['Tokens'] = df['Comments'].apply(word_tokenize)
@@ -34,13 +34,17 @@ from textblob_fr import PatternTagger, PatternAnalyzer
 from textblob import TextBlob
 # Exemple de fonction pour obtenir le sentiment
 def get_sentiment(text):
-    analysis = TextBlob(text)
-    if analysis.sentiment.polarity > 0:
-        return 'Positive'
-    elif analysis.sentiment.polarity < 0:
-        return 'Negative'
+    # Créer un objet TextBlob avec le pos_tagger et l'analyseur Pattern pour le français
+    blob = TextBlob(texte, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer())
+
+    # Déterminer le sentiment en fonction de la polarité
+    if blob.sentiment.polarity > 0:
+        return 'Positif'
+    elif blob.sentiment.polarity < 0:
+        return 'Négatif'
     else:
-        return 'Neutral'
+        return 'Neutre'
+    
 
 # Appliquer la fonction à la colonne 'Comments'
 df['Sentiment'] = df['Comments'].apply(get_sentiment)
