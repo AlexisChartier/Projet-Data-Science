@@ -2,7 +2,6 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import pandas as pd
 
-excel_file_path = 'C:/Users/david/Desktop/Projet DS/Extraction finale_enquete 2023DS.xlsx'
 
 
 # Charger les données depuis le fichier Excel
