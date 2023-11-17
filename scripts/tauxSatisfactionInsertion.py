@@ -91,14 +91,14 @@ proportionSatisfaction[2],proportionNeutre[2],proportionNegatif[2],annees[2] =pr
 # 2022
 print('2022 :')
 # Charger les données depuis le fichier Excel
-df2022 = df_setup('data/extraction_finale_enquete_2022_DS.xlsx')
+df2022 = df_setup('data/extraction_finale_enquete_2022DS.xlsx')
 df2022['Sentiment'] = df2022['Comments'].apply(get_sentiment)
 proportionSatisfaction[3],proportionNeutre[3],proportionNegatif[3],annees[3] = printGlobalSatisfaction(df2022, 2022)
 
 # 2023
 print('2023 :')
 # Charger les données depuis le fichier Excel
-df2023 = df_setup('data/Extraction finale_enquete 2023DS.xls')
+df2023 = df_setup('data/extraction_finale_enquete_2023DS.xls')
 df2023['Sentiment'] = df2023['Comments'].apply(get_sentiment)
 proportionSatisfaction[4],proportionNeutre[4],proportionNegatif[4],annees[4] =printGlobalSatisfaction(df2023, 2023)
 
