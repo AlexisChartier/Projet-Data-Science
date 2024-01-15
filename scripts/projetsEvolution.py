@@ -1,5 +1,3 @@
-### UTILISER INTERPRETEUR PYTHON < 3.11.0 POUR PB DE COMPATIBILITE AVEC LIB WORDCLOUD
-
 import pandas as pd
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
@@ -38,29 +36,30 @@ def clean_text(text):
         return ''
     # Supprimer les caractères indésirables, y compris les retours chariot et les espaces en fin de mot
     cleaned_text = re.sub(r'[^a-zA-Z0-9\s]', '', str(text))
-    if pd.isna(cleaned_text):
-        return ''
+    # Remplacer les sauts de ligne par des espaces
+    cleaned_text = cleaned_text.replace('\n', ' ').replace('\r', '')
     return cleaned_text.strip()
 
 def main():
     # Liste des années à analyser
-    annees = [2018,2019,2021, 2022, 2023]
+    annees = [2018,2019,2020,2021, 2022, 2023]
 
     # Dictionnaire pour stocker les thèmes globaux par filière
     themes_globaux_par_filiere = {}
 
 
     for annee in annees:
-        if annee == 2023 or annee == 2018:
-            fichier_excel = f'data/extraction_finale_enquete_{annee}DS.xls'
+        if annee == 2023 or annee == 2018 or annee  == 2020:
+            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xls'
             df = pd.read_excel(fichier_excel)
         else:
             # Charger les données depuis le fichier Excel
-            fichier_excel = f'data/extraction_finale_enquete_{annee}DS.xlsx'
+            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xlsx'
             df = pd.read_excel(fichier_excel, engine='openpyxl')
 
 
         df["Quels sont vos projets d'évolution de carrière ?"] = df["Quels sont vos projets d'évolution de carrière ?"].apply(clean_text)
+        
         # Extraire les données textuelles
         textes_projets_evolution = df["Quels sont vos projets d'évolution de carrière ?"].dropna()
 
@@ -74,12 +73,12 @@ def main():
         generate_wordcloud(themes_counter, f"Nuage de mots des thèmes en {annee}")
 
     for annee in annees:
-        if annee == 2023 or annee == 2018:
-            fichier_excel = f'data/extraction_finale_enquete_{annee}DS.xls'
+        if annee == 2023 or annee == 2018 or annee  == 2020:
+            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xls'
             df = pd.read_excel(fichier_excel)
         else:
             # Charger les données depuis le fichier Excel
-            fichier_excel = f'data/extraction_finale_enquete_{annee}DS.xlsx'
+            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xlsx'
             df = pd.read_excel(fichier_excel, engine='openpyxl')
 
         # Liste des filières dans le DataFrame
@@ -90,10 +89,6 @@ def main():
                 themes_globaux_par_filiere[filiere] = themes_counter.copy()
             else:
                 themes_globaux_par_filiere[filiere] += themes_counter
-
-        # Générer et afficher le nuage de mots global pour chaque filière
-        for filiere, themes_counter in themes_globaux_par_filiere.items():
-            generate_wordcloud(themes_counter, f"Nuage de mots des thèmes en {filiere} - Global")
 
         for filiere in filieres:
             # Filtrer le DataFrame par filière
@@ -113,7 +108,9 @@ def main():
 
             # Générer et afficher le nuage de mots pour chaque filière et année
             generate_wordcloud(themes_counter, f"Nuage de mots des thèmes en {filiere} - {annee}")
-
+                # Générer et afficher le nuage de mots global pour chaque filière
+    for filiere, themes_counter in themes_globaux_par_filiere.items():
+        generate_wordcloud(themes_counter, f"Nuage de mots des thèmes en {filiere} - Global")
 
 if __name__ == "__main__":
     main()

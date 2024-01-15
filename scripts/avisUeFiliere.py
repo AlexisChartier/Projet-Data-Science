@@ -25,6 +25,7 @@ def process_enseignements(dataframe,annee):
         utile_value = row['Quels enseignements, absents de votre formation, vous auraient été utiles ?']
         inutile_value = row['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?']
 
+        
         # Vérifier si les valeurs ne sont pas nulles (NaN) avant d'appliquer split()
         if isinstance(merite_value, str) and isinstance(utile_value, str) and isinstance(inutile_value, str):
             # Normalisation des données
@@ -51,16 +52,19 @@ def process_enseignements(dataframe,annee):
 
 def main():
     # Liste des années à analyser
-    annees = [2021, 2022, 2023]
+    annees = [2020,2021, 2022, 2023]
 
     # Boucle sur les années
     for annee in annees:
         if annee == 2023:
-            fichier_excel = f'data/extraction_finale_enquete_{annee}DS.xls'
+            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xls'
+            df = pd.read_excel(fichier_excel)
+        elif annee == 2020:
+            fichier_excel = f'datav2/extraction_finale_enquete_2020DS.xls'
             df = pd.read_excel(fichier_excel)
         else:
         # Charger les données depuis le fichier Excel
-            fichier_excel = f'data/extraction_finale_enquete_{annee}DS.xlsx'
+            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xlsx'
             df = pd.read_excel(fichier_excel)
         
         # Appeler la fonction pour traiter les enseignements

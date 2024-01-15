@@ -59,12 +59,9 @@ def main():
     years = []
 
     for year in range(2018, 2024):
-        if year == 2020:
-            continue
-
         print(f'{year} :')
         # Charger les données depuis le fichier Excel
-        df = df_setup(f'data/extraction_finale_enquete_{year}DS.xls' if year == 2018 or year == 2023 else f'data/extraction_finale_enquete_{year}DS.xlsx')
+        df = df_setup(f'datav2/extraction_finale_enquete_{year}DS.xls' if year == 2018 or year == 2023 or year == 2020 else f'datav2/extraction_finale_enquete_{year}DS.xlsx')
         df['Formation'] = df['Formation'].str.strip()  
 
         satisfaction_rate = {'Satisfaction': [], 'Neutral': [], 'Negative': []}
