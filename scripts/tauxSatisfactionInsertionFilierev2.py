@@ -54,7 +54,7 @@ def main():
         'Systèmes Embarqués (SE - apprentissage)'
     ]
 
-    # Dictionnaire pour stocker les taux de satisfaction par année
+    # Dictionnaire pour stocker les taux de satisfaction par filière
     satisfaction_rates = {'Satisfaction': [], 'Neutral': [], 'Negative': []}
     years = []
 
@@ -77,29 +77,38 @@ def main():
         # Filtrer les données pour l'année actuelle
         df_year = df_concat[df_concat['Année d\'obtention du diplôme'] == year]
 
-        # Calculer le taux de satisfaction pour l'année
-        satisfaction, neutral, negative = calculate_satisfaction_rate(df_year)
+        satisfaction_rate = {'Satisfaction': [], 'Neutral': [], 'Negative': []}
 
-        # Ajouter les taux au dictionnaire
-        satisfaction_rates['Satisfaction'].append(satisfaction)
-        satisfaction_rates['Neutral'].append(neutral)
-        satisfaction_rates['Negative'].append(negative)
+        for formation in formations:
+            # Filtrer les données pour la formation actuelle
+            df_formation = df_year[df_year['Formation'] == formation]
 
-        print(f"Taux de satisfaction pour l'année {year} : {satisfaction:.2%}")
-        print(f"Taux neutre pour l'année {year} : {neutral:.2%}")
-        print(f"Taux non satisfaction pour l'année {year} : {negative:.2%}")
+            # Calculer le taux de satisfaction pour la filière
+            satisfaction, neutral, negative = calculate_satisfaction_rate(df_formation)
 
+            # Ajouter les taux au dictionnaire
+            satisfaction_rate['Satisfaction'].append(satisfaction)
+            satisfaction_rate['Neutral'].append(neutral)
+            satisfaction_rate['Negative'].append(negative)
+
+            print(f"Taux de satisfaction pour la formation {formation} : {satisfaction:.2%}")
+            print(f"Taux neutre pour la formation {formation} : {neutral:.2%}")
+            print(f"Taux non satisfaction pour la formation {formation} : {negative:.2%}")
+
+        # Ajouter les taux au dictionnaire principal
+        satisfaction_rates['Satisfaction'].append(satisfaction_rate['Satisfaction'])
+        satisfaction_rates['Neutral'].append(satisfaction_rate['Neutral'])
+        satisfaction_rates['Negative'].append(satisfaction_rate['Negative'])
         years.append(year)
 
     # Tracer le graphique
     plt.figure(figsize=(10, 6))
     
-    plt.plot(years, satisfaction_rates['Satisfaction'], marker='o', label='Satisfaction', linestyle='-')
-    plt.plot(years, satisfaction_rates['Neutral'], marker='o', label='Neutral', linestyle='-')
-    plt.plot(years, satisfaction_rates['Negative'], marker='o', label='Negative', linestyle='-')
+    for i, formation in enumerate(formations):
+        plt.plot(years, [rate[i] for rate in satisfaction_rates['Satisfaction']], marker='o', label=f'{formation}', linestyle='-')
 
     # Ajouter des étiquettes et des titres
-    plt.title("Évolution du taux de satisfaction global au fil du temps")
+    plt.title("Évolution du taux de satisfaction par filière au fil du temps")
     plt.xlabel("Année")
     plt.ylabel("Taux de Satisfaction (%)")
     plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
