@@ -1,0 +1,28 @@
+/* FILEPATH: /c:/Users/david/Desktop/DSrepo/Projet-Data-Science/dash/style/styles.css */
+
+/* Lissage des éléments */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bordure */
+.container {
+    border: 1px solid #000000;
+    border-radius: 5px;
+}
+
+/* Police */
+h1, h2, h3 {
+    font-family: Arial, sans-serif;
+}
+
+/* Marge */
+.container {
+    margin: 20px;
+}
+
+/* Couleur de fond */
+body {
+    background-color: #9b9b9b;
+}

@@ -4,15 +4,15 @@ from collections import Counter
 def process_enseignements(dataframe,annee):
     # Dictionnaire pour stocker les enseignements par filière
     enseignements_par_filiere = {
-        'Mécanique et Interactions (MI)': {'merite': [], 'utile': [], 'inutile': []},
-        'Microélectronique Et Automatique (MEA)': {'merite': [], 'utile': [], 'inutile': []},
-        'Matériaux (MAT)': {'merite': [], 'utile': [], 'inutile': []},
-        'Génie Biologique et Agroalimentaires (GBA)': {'merite': [], 'utile': [], 'inutile': []},
-        'Mécanique Structures Industrielles (MSI - apprentissage)': {'merite': [], 'utile': [], 'inutile': []},
-        'Eau et Génie Civil (EGC - apprentissage)': {'merite': [], 'utile': [], 'inutile': []},
-        'Sciences et Technologies de l\'Eau (STE)': {'merite': [], 'utile': [], 'inutile': []},
-        'Informatique et Gestion (IG)': {'merite': [], 'utile': [], 'inutile': []},
-        'Systèmes Embarqués (SE - apprentissage)': {'merite': [], 'utile': [], 'inutile': []},
+        'Mécanique et Interactions (MI)': {'utileinsertion':[], 'merite': [], 'utile': [], 'inutile': []},
+        'Microélectronique Et Automatique (MEA)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Matériaux (MAT)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Génie Biologique et Agroalimentaires (GBA)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Mécanique Structures Industrielles (MSI - apprentissage)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Eau et Génie Civil (EGC - apprentissage)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Sciences et Technologies de l\'Eau (STE)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Informatique et Gestion (IG)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Systèmes Embarqués (SE - apprentissage)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
     }
 
     # Itérer sur chaque ligne du dataframe
@@ -21,19 +21,22 @@ def process_enseignements(dataframe,annee):
         filiere = row['Formation']
 
         # Ajouter les enseignements correspondants à chaque catégorie
+        utile_inser = row['Quels enseignements vous semblent les plus utiles pour l\'exercice de votre métier et votre insertion professionnelle ?']
         merite_value = row['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?']
         utile_value = row['Quels enseignements, absents de votre formation, vous auraient été utiles ?']
         inutile_value = row['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?']
 
         
         # Vérifier si les valeurs ne sont pas nulles (NaN) avant d'appliquer split()
-        if isinstance(merite_value, str) and isinstance(utile_value, str) and isinstance(inutile_value, str):
+        if isinstance(merite_value, str) and isinstance(utile_value, str) and isinstance(inutile_value, str) and isinstance(utile_inser, str):
             # Normalisation des données
+            utile_inser = utile_inser.lower().strip()
             merite_value = merite_value.lower().strip()
             utile_value = utile_value.lower().strip()
             inutile_value = inutile_value.lower().strip()
 
             # Ajout des enseignements dans le dictionnaire
+            enseignements_par_filiere[filiere]['utileinsertion'].extend(utile_inser.split(','))
             enseignements_par_filiere[filiere]['merite'].extend(merite_value.split(','))
             enseignements_par_filiere[filiere]['utile'].extend(utile_value.split(','))
             enseignements_par_filiere[filiere]['inutile'].extend(inutile_value.split(','))
