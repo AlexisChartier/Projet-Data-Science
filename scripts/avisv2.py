@@ -1,9 +1,22 @@
-#Méthode d'analyse : Fréauence des mots
-
 import pandas as pd
+import matplotlib.pyplot as plt
 from collections import Counter
 
-def process_enseignements(dataframe,annee):
+def load_and_preprocess(year):
+    file_path = f'datav2/extraction_finale_enquete_{year}DS.' + ('xls' if year in [2018, 2020, 2023] else 'xlsx')
+    df = pd.read_excel(file_path)
+    df = df.dropna(subset=['Quels enseignements vous semblent les plus utiles pour l\'exercice de votre métier et votre insertion professionnelle ?'])
+    df = df.dropna(subset=['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?'])
+    df = df.dropna(subset=['Quels enseignements, absents de votre formation, vous auraient été utiles ?'])
+    df = df.dropna(subset=['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?'])
+    df['Quels enseignements vous semblent les plus utiles pour l\'exercice de votre métier et votre insertion professionnelle ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Quels enseignements, absents de votre formation, vous auraient été utiles ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
+    return df
+
+
+def process_enseignements(dataframe):
     # Dictionnaire pour stocker les enseignements par filière
     enseignements_par_filiere = {
         'Mécanique et Interactions (MI)': {'utileinsertion':[], 'merite': [], 'utile': [], 'inutile': []},
@@ -51,29 +64,20 @@ def process_enseignements(dataframe,annee):
             # Sélectionner les trois résultats les plus fréquents
             top_3 = counter.most_common(3)
             # Afficher les résultats
-            print(f"\nFilière {filiere}, Catégorie {categorie}, Année {annee}  :")
+            print(f"\nFilière {filiere}, Catégorie {categorie} :")
             for enseignement, count in top_3:
                 print(f"{enseignement}: {count} fois")
 
+
 def main():
-    # Liste des années à analyser
-    annees = [2020,2021, 2022, 2023]
+    years = range(2018, 2024)
+    all_data = pd.DataFrame()
 
-    # Boucle sur les années
-    for annee in annees:
-        if annee == 2023:
-            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xls'
-            df = pd.read_excel(fichier_excel)
-        elif annee == 2020:
-            fichier_excel = f'datav2/extraction_finale_enquete_2020DS.xls'
-            df = pd.read_excel(fichier_excel)
-        else:
-        # Charger les données depuis le fichier Excel
-            fichier_excel = f'datav2/extraction_finale_enquete_{annee}DS.xlsx'
-            df = pd.read_excel(fichier_excel)
-        
-        # Appeler la fonction pour traiter les enseignements
-        process_enseignements(df, annee)
+    for year in years:
+        df_year = load_and_preprocess(year)
+        all_data = pd.concat([all_data, df_year])
 
-if __name__ == "__main__":
+    process_enseignements(all_data)
+
+if __name__ == '__main__':
     main()
