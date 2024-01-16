@@ -9,10 +9,10 @@ def load_and_preprocess(year):
     df = df.dropna(subset=['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?'])
     df = df.dropna(subset=['Quels enseignements, absents de votre formation, vous auraient été utiles ?'])
     df = df.dropna(subset=['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?'])
-    df['Quels enseignements vous semblent les plus utiles pour l\'exercice de votre métier et votre insertion professionnelle ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
-    df['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
-    df['Quels enseignements, absents de votre formation, vous auraient été utiles ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
-    df['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?'] = df['Avis sur les UE'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Quels enseignements vous semblent les plus utiles pour l\'exercice de votre métier et votre insertion professionnelle ?'] = df['Quels enseignements vous semblent les plus utiles pour l\'exercice de votre métier et votre insertion professionnelle ?'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?'] = df['Parmi les enseignements fournis par l\'école, quels sont ceux qui mériteraient d\'être approfondis ou renforcés ?'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Quels enseignements, absents de votre formation, vous auraient été utiles ?'] = df['Quels enseignements, absents de votre formation, vous auraient été utiles ?'].str.lower().str.replace(r'[^\w\s]', '')
+    df['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?'] = df['Quels enseignements, présents dans votre formation, vous paraissent inutiles ?'].str.lower().str.replace(r'[^\w\s]', '')
     return df
 
 
