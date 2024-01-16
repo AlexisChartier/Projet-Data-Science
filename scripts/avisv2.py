@@ -16,6 +16,27 @@ def load_and_preprocess(year):
     return df
 
 
+def plot_results(enseignements_par_filiere):
+    for filiere, enseignements in enseignements_par_filiere.items():
+        for categorie, liste_enseignements in enseignements.items():
+            # Utiliser Counter pour compter les occurrences
+            counter = Counter(liste_enseignements)
+            # Sélectionner les trois résultats les plus fréquents
+            top_3 = counter.most_common(3)
+            # Extraire les enseignements et les occurrences
+            enseignements, occurrences = zip(*top_3)
+            # Créer un graphique à barres
+            plt.bar(enseignements, occurrences)
+            # Ajouter des étiquettes aux barres
+            for i, v in enumerate(occurrences):
+                plt.text(i, v, str(v), ha='center', va='bottom')
+            # Ajouter un titre et des étiquettes d'axe
+            plt.title(f"Résultats des enseignements pour la filière {filiere}, catégorie {categorie}")
+            plt.xlabel("Enseignements")
+            plt.ylabel("Occurrences")
+            # Afficher le graphique
+            plt.show()
+
 def process_enseignements(dataframe):
     # Dictionnaire pour stocker les enseignements par filière
     enseignements_par_filiere = {
@@ -56,6 +77,7 @@ def process_enseignements(dataframe):
             enseignements_par_filiere[filiere]['utile'].extend(utile_value.split(','))
             enseignements_par_filiere[filiere]['inutile'].extend(inutile_value.split(','))
 
+    plot_results(enseignements_par_filiere)
     # Afficher les trois résultats les plus fréquents pour chaque catégorie
     for filiere, enseignements in enseignements_par_filiere.items():
         for categorie, liste_enseignements in enseignements.items():
@@ -70,7 +92,7 @@ def process_enseignements(dataframe):
 
 
 def main():
-    years = range(2018, 2024)
+    years = range(2020, 2024)
     all_data = pd.DataFrame()
 
     for year in years:
