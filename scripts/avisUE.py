@@ -40,15 +40,15 @@ def plot_results(enseignements_par_filiere):
 def process_enseignements(dataframe):
     # Dictionnaire pour stocker les enseignements par filière
     enseignements_par_filiere = {
-        'Mécanique et Interactions (MI)': {'utileinsertion':[], 'merite': [], 'utile': [], 'inutile': []},
-        'Microélectronique Et Automatique (MEA)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Matériaux (MAT)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Génie Biologique et Agroalimentaires (GBA)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Mécanique Structures Industrielles (MSI - apprentissage)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Eau et Génie Civil (EGC - apprentissage)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Sciences et Technologies de l\'Eau (STE)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Informatique et Gestion (IG)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
-        'Systèmes Embarqués (SE - apprentissage)': {'utileinsertion':[],'merite': [], 'utile': [], 'inutile': []},
+        'Mécanique et Interactions (MI)': {'utileinsertion':[], 'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Microélectronique Et Automatique (MEA)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Matériaux (MAT)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Génie Biologique et Agroalimentaires (GBA)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Mécanique Structures Industrielles (MSI - apprentissage)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Eau et Génie Civil (EGC - apprentissage)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Sciences et Technologies de l\'Eau (STE)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Informatique et Gestion (IG)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
+        'Systèmes Embarqués (SE - apprentissage)': {'utileinsertion':[],'meriteapprondis': [], 'auraitutile': [], 'inutile': []},
     }
 
     # Itérer sur chaque ligne du dataframe
@@ -73,8 +73,8 @@ def process_enseignements(dataframe):
 
             # Ajout des enseignements dans le dictionnaire
             enseignements_par_filiere[filiere]['utileinsertion'].extend(utile_inser.split(','))
-            enseignements_par_filiere[filiere]['merite'].extend(merite_value.split(','))
-            enseignements_par_filiere[filiere]['utile'].extend(utile_value.split(','))
+            enseignements_par_filiere[filiere]['meriteapprondis'].extend(merite_value.split(','))
+            enseignements_par_filiere[filiere]['auraitutile'].extend(utile_value.split(','))
             enseignements_par_filiere[filiere]['inutile'].extend(inutile_value.split(','))
 
     plot_results(enseignements_par_filiere)

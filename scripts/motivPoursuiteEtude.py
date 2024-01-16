@@ -1,12 +1,15 @@
 import pandas as pd
 import spacy
+import nltk as nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import re
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-
+nltk.download('vader_lexicon')
 
 # Initialisation
 nlp = spacy.load('fr_core_news_sm')
@@ -56,16 +59,31 @@ feature_names = vectorizer.get_feature_names_out()
 dense = tfidf_matrix.todense()
 denselist = dense.tolist()
 df_tfidf = pd.DataFrame(denselist, columns=feature_names)
-# Appel de la fonction pour afficher le graphique
-plot_top_words(df_tfidf, top_n=10, title="Top 10 TF-IDF Words")
+
+# Réduction de dimension avec PCA
+pca = PCA(n_components=2)
+tfidf_pca = pca.fit_transform(df_tfidf)
+
+# Clustering avec K-means
+kmeans = KMeans(n_clusters=5, random_state=42)
+clusters = kmeans.fit_predict(tfidf_pca)
+
+# Ajouter les clusters au DataFrame
+df_tfidf['Cluster'] = clusters
+
+# Afficher les graphiques des 5 premiers clusters
+for cluster in range(5):
+    cluster_data = df_tfidf[df_tfidf['Cluster'] == cluster]
+    plot_top_words(cluster_data.drop('Cluster', axis=1), top_n=10, title=f"Top 10 TF-IDF Words - Cluster {cluster+1}")
 
 # Afficher les résultats
 top_n = 10
 for col in df_tfidf.columns:
-    print(f"Top {top_n} mots-clés pour '{col}':")
-    top_keywords = df_tfidf[col].sort_values(ascending=False).head(top_n)
-    print(top_keywords)
-    print("\n")
+    if col != 'Cluster':
+        print(f"Top {top_n} mots-clés pour '{col}':")
+        top_keywords = df_tfidf[col].sort_values(ascending=False).head(top_n)
+        print(top_keywords)
+        print("\n")
 
 
 
