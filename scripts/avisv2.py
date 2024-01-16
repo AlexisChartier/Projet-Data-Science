@@ -70,7 +70,7 @@ def process_enseignements(dataframe):
 
 
 def main():
-    years = range(2018, 2024)
+    years = range(2020, 2024)
     all_data = pd.DataFrame()
 
     for year in years:
