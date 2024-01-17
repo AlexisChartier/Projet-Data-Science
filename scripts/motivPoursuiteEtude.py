@@ -6,8 +6,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import re
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
+import seaborn as sns
+from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 nltk.download('vader_lexicon')
 
@@ -47,43 +47,40 @@ for year in years:
     df = df.dropna(subset=['Pour quelle raison avez-vous principalement choisi de poursuivre des études ?'])
     df['Texte_Traité'] = df['Pour quelle raison avez-vous principalement choisi de poursuivre des études ?'].apply(preprocess_text)
     df['Year'] = year
-    all_data = all_data._append(df[['Texte_Traité', 'Year']], ignore_index=True)
+    all_data = all_data._append(df[['Texte_Traité', 'Year','Formation']], ignore_index=True)
 
-# Analyse de Sentiment
-all_data['Sentiment'] = all_data['Texte_Traité'].apply(lambda x: sia.polarity_scores(x)['compound'])
+# Créer une matrice TF-IDF avec ngram range 1-2
+tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 2))
+tfidf_matrix = tfidf_vectorizer.fit_transform(all_data['Texte_Traité'])
 
-# TF-IDF avec Bigrammes et Trigrammes
-vectorizer = TfidfVectorizer(ngram_range=(1, 3))
-tfidf_matrix = vectorizer.fit_transform(all_data['Texte_Traité'])
-feature_names = vectorizer.get_feature_names_out()
-dense = tfidf_matrix.todense()
-denselist = dense.tolist()
-df_tfidf = pd.DataFrame(denselist, columns=feature_names)
-
-# Réduction de dimension avec PCA
-pca = PCA(n_components=2)
-tfidf_pca = pca.fit_transform(df_tfidf)
-
-# Clustering avec K-means
-kmeans = KMeans(n_clusters=5, random_state=42)
-clusters = kmeans.fit_predict(tfidf_pca)
-
-# Ajouter les clusters au DataFrame
-df_tfidf['Cluster'] = clusters
-
-# Afficher les graphiques des 5 premiers clusters
-for cluster in range(5):
-    cluster_data = df_tfidf[df_tfidf['Cluster'] == cluster]
-    plot_top_words(cluster_data.drop('Cluster', axis=1), top_n=10, title=f"Top 10 TF-IDF Words - Cluster {cluster+1}")
-
-# Afficher les résultats
+# Obtenir les mots les plus fréquents par filière
 top_n = 10
-for col in df_tfidf.columns:
-    if col != 'Cluster':
-        print(f"Top {top_n} mots-clés pour '{col}':")
-        top_keywords = df_tfidf[col].sort_values(ascending=False).head(top_n)
-        print(top_keywords)
-        print("\n")
+for formation in all_data['Formation'].unique():
+    print(f"Top {top_n} mots les plus fréquents pour la filière '{formation}':")
+    formation_data = all_data[all_data['Formation'] == formation]
+    formation_tfidf_matrix = tfidf_matrix[formation_data.index]
+    word_scores = pd.DataFrame(formation_tfidf_matrix.toarray(), columns=tfidf_vectorizer.get_feature_names_out()).sum().sort_values(ascending=False)
+    top_words = word_scores.head(top_n)
+    print(top_words)
+    print("\n")
 
+    # Création du graphique à barres
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=top_words.index, y=top_words.values)
+    plt.title(f"Top {top_n} mots les plus fréquents pour la filière '{formation}'")
+    plt.xlabel('Mots')
+    plt.ylabel('Somme des scores TF-IDF')
+    plt.xticks(rotation=45)
+    plt.show()
+
+# Création du nuage de mots global
+all_text = ' '.join(all_data['Texte_Traité'])
+wordcloud = WordCloud(width=800, height=400).generate(all_text)
+
+plt.figure(figsize=(10, 6))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.title('Nuage de mots global')
+plt.show()
 
 

@@ -6,13 +6,6 @@ from dash.dependencies import Input, Output
 app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
 
-# Ajoutez du CSS personnalisé ici
-external_css = [
-    "style/styles.css"  # Ajoutez le lien vers votre fichier CSS personnalisé ici
-]
-
-for css in external_css:
-    app.css.append_css({"external_url": css})
 
 app.layout = html.Div(
     children=[
@@ -21,8 +14,9 @@ app.layout = html.Div(
         html.P("Application dash pour la visualisation des résultats des analyses", className="lead"),
         html.Div(
             children=[
-                html.Button("Page 1", className="btn btn-primary mr-2", id="btn-page1"),
-                html.Button("Page 2", className="btn btn-primary", id="btn-page2")
+                html.Button("Analyse des avis sur les UE", className="btn btn-primary mr-2", id="btn-avis"),
+                html.Button("Analyse de la satisfaction", className="btn btn-primary", id="btn-satisfaction"),
+                html.Button("Analyse des projets d'évolution de carrière", className="btn btn-primary", id="btn-projets-evolution")
             ],
             className="mb-4"
         ),
