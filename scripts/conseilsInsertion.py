@@ -57,4 +57,5 @@ for formation in all_data['Formation'].unique():
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
     plt.title(f"Main Topic for {formation}")
+    plt.savefig(f"results/Conseils pour l\'insertion pro/conseilsInsertion_{formation}.png")
     plt.show()

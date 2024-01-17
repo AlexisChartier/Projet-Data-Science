@@ -19,9 +19,9 @@ def extract_themes(text):
     # Retourner les thèmes les plus fréquents
     return theme_counter
 
-def generate_wordcloud(text_counter, title):
+def generate_wordcloud(text_counter, title, path):
     if len(text_counter) != 0:
-        # Générer le nuage de mot
+        # Générer le nuage de mots
         wordcloud = WordCloud(width=800, height=400, background_color="white").generate_from_frequencies(text_counter)
 
         # Afficher le nuage de mots
@@ -29,6 +29,7 @@ def generate_wordcloud(text_counter, title):
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
         plt.title(title)
+        plt.savefig(path)  # Sauvegarder le nuage de mots
         plt.show()
 
 def clean_text(text):
@@ -75,7 +76,7 @@ def main():
     themes_counter = extract_themes(texte_global)
 
     # Générer et afficher le nuage de mots global
-    generate_wordcloud(themes_counter, "Nuage de mots des thèmes - Global")
+    generate_wordcloud(themes_counter, "Nuage de mots des thèmes - Global", "results/projetsEvolution/projetsEvolutionGlobal.png")
 
     # Liste des filières dans le DataFrame
     filieres = df_concat['Formation'].unique()
@@ -97,7 +98,7 @@ def main():
         themes_counter = extract_themes(texte_global)
 
         # Générer et afficher le nuage de mots pour chaque filière
-        generate_wordcloud(themes_counter, f"Nuage de mots des thèmes en {filiere}")
+        generate_wordcloud(themes_counter, f"Nuage de mots des thèmes en {str(filiere)}", "results/projetsEvolution/projetsEvolution"+str(filiere)+".png")
 
     exit(0)
 

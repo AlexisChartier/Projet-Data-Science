@@ -1,19 +1,21 @@
 import pandas as pd
+from pytest import console_main
 import spacy
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import NMF
-#from bertopic import BERTopic
+from bertopic import BERTopic
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import plotly.io as pio
 
 # Initialiser spacy pour la lemmatisation
 nlp = spacy.load('fr_core_news_sm')
 
 # Télécharger les stopwords
-nltk.download('stopwords')
+#nltk.download('stopwords')
 stop_words = stopwords.words('french')
 
 def preprocess_text(text):
@@ -40,31 +42,21 @@ dataframes = [load_and_preprocess_data(year) for year in range(2018, 2024)]
 all_data = pd.concat(dataframes, ignore_index=True)
 
 # Vectorisation avec Bigrammes et Trigrammes
-vectorizer = CountVectorizer(ngram_range=(1, 3), stop_words=stop_words)
-X = vectorizer.fit_transform(all_data['Comments'])
+#vectorizer = CountVectorizer(ngram_range=(1, 3), stop_words=stop_words)
+#X = vectorizer.fit_transform(all_data['Comments'])
 
-# Analyse de thèmes avec NMF
-nmf = NMF(n_components=5, random_state=42)
-nmf.fit(X)
-
-feature_names = vectorizer.get_feature_names_out()
-for topic_idx, topic in enumerate(nmf.components_):
-    print(f"Topic {topic_idx}:")
-    print(" ".join([feature_names[i] for i in topic.argsort()[:-10 - 1:-1]]))
-
-#bertopic_model = BERTopic(language='french')
-#topics, _ = bertopic_model.fit_transform(all_data['Comments'])
-
-for topic_idx in range(nmf.n_components):
-    words = dict(zip(feature_names, nmf.components_[topic_idx]))
-    wordcloud = WordCloud(width=800, height=400, background_color="white").generate_from_frequencies(words)
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation="bilinear")
-    plt.axis("off")
-    plt.title(f"Topic {topic_idx}")
-    plt.show()
-
-#bertopic_model.visualize_topics()
+# Sort 'Comments' column of all_data by 'Formation' column
+all_data_sorted = all_data.sort_values(by='Formation')
+pio.renderers.default='iframe'
+# Analyze topics with BERTopic
+bertopic_model = BERTopic(language='multilingual', n_gram_range=(1,3))
+topics, _ = bertopic_model.fit_transform(all_data_sorted['Comments'])
+bertopic_model.get_topic_info()
+# Visualize topics
+fig1 = bertopic_model.visualize_topics(width=600, height=600)
+fig1.write_html("results/difficultésEmploiTopics.html")
+fig2 = bertopic_model.visualize_barchart(width=600, height=600)
+fig2.write_html("results/difficultésEmploiBarchart.html")
 
 
 

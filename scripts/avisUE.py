@@ -35,6 +35,7 @@ def plot_results(enseignements_par_filiere):
             plt.xlabel("Enseignements")
             plt.ylabel("Occurrences")
             # Afficher le graphique
+            plt.savefig(f"results/Avis sur les UE/avisUE_{filiere}_{categorie}.png")
             plt.show()
 
 def process_enseignements(dataframe):

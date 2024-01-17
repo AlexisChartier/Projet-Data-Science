@@ -1,0 +1,2 @@
+Ce répertoire contient le résultat pour l'analyse sur la colonne : 'Vos remarques et commentaires relatifs à votre insertion professionnelle' via une analyse de sentiment
+Le script python associé est tauxSatisfactionInsertionFiliere.py sur le github dans le repertoire scripts.

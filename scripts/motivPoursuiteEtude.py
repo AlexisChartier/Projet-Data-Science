@@ -8,8 +8,9 @@ from nltk.corpus import stopwords
 import re
 import seaborn as sns
 from wordcloud import WordCloud
+from bertopic import BERTopic
 import matplotlib.pyplot as plt
-nltk.download('vader_lexicon')
+import plotly.io as pio
 
 # Initialisation
 nlp = spacy.load('fr_core_news_sm')
@@ -49,38 +50,15 @@ for year in years:
     df['Year'] = year
     all_data = all_data._append(df[['Texte_Traité', 'Year','Formation']], ignore_index=True)
 
-# Créer une matrice TF-IDF avec ngram range 1-2
-tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 2))
-tfidf_matrix = tfidf_vectorizer.fit_transform(all_data['Texte_Traité'])
-
-# Obtenir les mots les plus fréquents par filière
-top_n = 10
-for formation in all_data['Formation'].unique():
-    print(f"Top {top_n} mots les plus fréquents pour la filière '{formation}':")
-    formation_data = all_data[all_data['Formation'] == formation]
-    formation_tfidf_matrix = tfidf_matrix[formation_data.index]
-    word_scores = pd.DataFrame(formation_tfidf_matrix.toarray(), columns=tfidf_vectorizer.get_feature_names_out()).sum().sort_values(ascending=False)
-    top_words = word_scores.head(top_n)
-    print(top_words)
-    print("\n")
-
-    # Création du graphique à barres
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=top_words.index, y=top_words.values)
-    plt.title(f"Top {top_n} mots les plus fréquents pour la filière '{formation}'")
-    plt.xlabel('Mots')
-    plt.ylabel('Somme des scores TF-IDF')
-    plt.xticks(rotation=45)
-    plt.show()
-
-# Création du nuage de mots global
-all_text = ' '.join(all_data['Texte_Traité'])
-wordcloud = WordCloud(width=800, height=400).generate(all_text)
-
-plt.figure(figsize=(10, 6))
-plt.imshow(wordcloud, interpolation='bilinear')
-plt.axis('off')
-plt.title('Nuage de mots global')
-plt.show()
 
 
+# Analyze topics with BERTopic
+bertopic_model = BERTopic(language='multilingual', n_gram_range=(1,3))
+topics, _ = bertopic_model.fit_transform(all_data['Texte_Traité'])
+bertopic_model.get_topic_info()
+
+# Visualize topics
+fig1 = bertopic_model.visualize_topics(width=600, height=600)
+fig1.write_html("results/topicsPoursuiteEtude.html")
+fig2 = bertopic_model.visualize_barchart(width=600, height=600)
+fig2.write_html("results/barchartPoursuiteEtude.html")
