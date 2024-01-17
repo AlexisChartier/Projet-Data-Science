@@ -6,6 +6,22 @@ import pandas as pd
 
 # Initialiser l'application Dash
 app = dash.Dash(__name__,suppress_callback_exceptions=True)
+# Ajouter du CSS pour rendre la navigation plus ergonomique et centrer le contenu
+app.css.append_css({
+    'external_url': 'https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css'
+})
+app.css.append_css({
+    'external_url': 'https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css'
+})
+app.css.append_css({
+    'external_url': 'https://fonts.googleapis.com/css?family=Raleway:400,400i,700,700i'
+})
+app.css.append_css({
+    'external_url': 'https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i'
+})
+app.css.append_css({
+    'external_url': 'https://cdn.jsdelivr.net/npm/dash-bootstrap-components@0.3.0/dist/dash-bootstrap-components.min.css'
+})
 
 # Générateur de menu déroulant pour les filières
 def generate_filiere_dropdown():
@@ -25,7 +41,8 @@ def generate_filiere_dropdown():
     return dcc.Dropdown(
         id='filiere-dropdown',
         options=[{'label': filiere, 'value': filiere} for filiere in filieres],
-        value=filieres[0]  # La valeur par défaut peut être la première filière de la liste
+        value=filieres[0],  # La valeur par défaut peut être la première filière de la liste
+        style={'width': '300px'}
     )
 
 # La structure de l'application avec des onglets pour chaque type de résultat
@@ -37,38 +54,39 @@ app.layout = html.Div([
         dcc.Tab(label="Motivations pour la poursuite d'étude", value='tab-4'),
         dcc.Tab(label="Projets d'évolution de carrière", value='tab-5'),
         dcc.Tab(label='Taux de satisfaction insertion', value='tab-6')
-    ]),
-    html.Div(id='tabs-content'),
+    ], style={'font-family': 'Raleway', 'font-weight': 'bold'}),
+    html.Div(id='tabs-content', style={'margin-top': '20px'}),
     dcc.RadioItems(
-                id='graph-type-selector-employment-difficulty',
-                options=[
-                    {'label': '2D Graph', 'value': '2DGraph'},
-                    {'label': 'Bar Chart', 'value': 'BarChart'}
-                ],
-                value='2DGraph'
-            ),
-        dcc.RadioItems(
-                id='graph-selector-avis-ue',
-                options=[
-                    {'label': 'UEs utiles pour l\'insertion professionnelle', 'value': 'utileinsertion'},
-                    {'label': 'UEs qui aurait méritées d\'être approfondies', 'value': 'meriteapprondis'},
-                    {'label': 'UEs absentes qui aurait été utiles', 'value': 'auraitutile'},
-                    {'label': 'UEs inutiles', 'value': 'inutile'}
-                ],
-                value='utileinsertion'
-            ),
+        id='graph-type-selector-employment-difficulty',
+        options=[
+            {'label': '2D Graph', 'value': '2DGraph'},
+            {'label': 'Bar Chart', 'value': 'BarChart'}
+        ],
+        value='2DGraph',
+        style={'margin-top': '20px'}
+    ),
     dcc.RadioItems(
-                id='graph-type-selector-motivations-poursuite-etude',
-                options=[
-                    {'label': '2D Graph', 'value': '2DGraph'},
-                    {'label': 'Bar Chart', 'value': 'BarChart'}
-                ],
-                value='2DGraph'
-            ),
+        id='graph-selector-avis-ue',
+        options=[
+            {'label': 'UEs utiles pour l\'insertion professionnelle', 'value': 'utileinsertion'},
+            {'label': 'UEs qui aurait méritées d\'être approfondies', 'value': 'meriteapprondis'},
+            {'label': 'UEs absentes qui aurait été utiles', 'value': 'auraitutile'},
+            {'label': 'UEs inutiles', 'value': 'inutile'}
+        ],
+        value='utileinsertion',
+        style={'margin-top': '20px'}
+    ),
+    dcc.RadioItems(
+        id='graph-type-selector-motivations-poursuite-etude',
+        options=[
+            {'label': '2D Graph', 'value': '2DGraph'},
+            {'label': 'Bar Chart', 'value': 'BarChart'}
+        ],
+        value='2DGraph',
+        style={'margin-top': '20px'}
+    ),
     generate_filiere_dropdown()
-])
-
-
+], style={'text-align': 'center', 'font-family': 'Product Sans'})
 
 # Le callback pour mettre à jour le contenu des onglets
 @app.callback(Output('tabs-content', 'children'),
@@ -116,7 +134,6 @@ def render_content(tab, selected_filiere):
             html.H3('Taux de satisfaction insertion'),
             html.Div(id='taux-satisfaction-insertion-graph')
         ])
-
 
 
 @app.callback(
@@ -200,6 +217,17 @@ def show_hide_employment_selector(tab):
 )
 def show_hide_motiv_selector(tab):
     if tab in ['tab-4']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+    
+
+@app.callback(
+    Output('graph-selector-avis-ue', 'style'),
+    [Input('tabs', 'value')]
+)
+def show_hide_avis_ue_selector(tab):
+    if tab in ['tab-1']:
         return {'display': 'block'}
     else:
         return {'display': 'none'}
