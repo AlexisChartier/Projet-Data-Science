@@ -47,6 +47,16 @@ app.layout = html.Div([
                 ],
                 value='2DGraph'
             ),
+        dcc.RadioItems(
+                id='graph-selector-avis-ue',
+                options=[
+                    {'label': 'UEs utiles pour l\'insertion professionnelle', 'value': 'utileinsertion'},
+                    {'label': 'UEs qui aurait méritées d\'être approfondies', 'value': 'meriteapprondis'},
+                    {'label': 'UEs absentes qui aurait été utiles', 'value': 'auraitutile'},
+                    {'label': 'UEs inutiles', 'value': 'inutile'}
+                ],
+                value='utileinsertion'
+            ),
     dcc.RadioItems(
                 id='graph-type-selector-motivations-poursuite-etude',
                 options=[
@@ -62,18 +72,22 @@ app.layout = html.Div([
 
 # Le callback pour mettre à jour le contenu des onglets
 @app.callback(Output('tabs-content', 'children'),
-              [Input('tabs', 'value')])  # Ajout de l'Input pour le sélecteur de filière
-def render_content(tab):
+              [Input('tabs', 'value'),
+               Input('filiere-dropdown','value')])  # Ajout de l'Input pour le sélecteur de filière
+def render_content(tab, selected_filiere):
     if tab == 'tab-1':
         # Intégrer ici le résultat du script avisUE.py
         return html.Div([
             html.H3('Avis sur les UE'),
+            html.Img(id='avis-ue-image')
             # Ajouter ici le graphique ou le tableau pertinent
         ])
     elif tab == 'tab-2':
         # Intégrer ici le résultat du script conseilsInsertion.py
         return html.Div([
             html.H3("Conseils pour l'insertion pro"),
+            html.Img(id='conseils-insertion-image')
+
             # Ajouter ici le graphique ou le tableau pertinent
         ])
     elif tab == 'tab-3':
@@ -93,16 +107,25 @@ def render_content(tab):
         # Intégrer ici le résultat du script projetsEvolution.py
         return html.Div([
             html.H3("Projets d'évolution de carrière"),
+            html.Img(id='projets-evolution-image')
             # Ajouter ici le graphique ou le tableau pertinent
         ])
     elif tab == 'tab-6':
         # Intégrer ici le résultat du script tauxSatisfactionInsertion.py
         return html.Div([
-            html.H3('Taux de satisfaction insertion')
-            # Ajouter ici le graphique ou le tableau pertinent
+            html.H3('Taux de satisfaction insertion'),
+            html.Div(id='taux-satisfaction-insertion-graph')
         ])
 
 
+
+@app.callback(
+    Output('avis-ue-image', 'src'),
+    [Input('graph-selector-avis-ue', 'value'),
+     Input('filiere-dropdown', 'value')])
+def update_avis_ue_image(selected_avis_ue, selected_filiere):
+    # Replace with actual logic to select the appropriate image based on the "filiere"
+    return f'assets/avis/avisUE_{selected_filiere}_{selected_avis_ue}.png'
 
 # Callback pour l'onglet "Difficultés pour la recherche d'emploi"
 @app.callback(
@@ -140,17 +163,13 @@ def update_graph(graph_type):
 
 # Notez que nous devons maintenant définir des callbacks séparés pour chaque graphique
 # qui dépend du sélecteur de filière. Voici un exemple de callback pour l'onglet 'Avis sur les UE':
-#@app.callback(
-#    Output('avis-ue-graph', 'figure'),
-#    [Input('filiere-dropdown', 'value')]
-#)
-#def update_avis_ue_graph(selected_filiere):
-    # Ici, vous filtreriez vos données en fonction de la filière sélectionnée et
-    # génèreriez le graphique correspondant. Voici un exemple générique:
-#    df = pd.DataFrame()  # Remplacez par le chargement de vos données réelles
-#    filtered_df = df[df['Filière'] == selected_filiere]
-#    fig = px.line(filtered_df, x='Année', y='Valeur')  # Remplacez par vos axes réels
-#    return fig
+@app.callback(
+    Output('taux-satisfaction-insertion-graph', 'children'),
+    [Input('tabs', 'value')]
+)
+def show_graphSatisfaction(tab):
+    if tab in ['tab-6']:
+        return html.Img(src='assets/satisfaction/tauxSatisfactionInsertionFiliere.png', style={"height": "800px", "width": "100%"})
 
 
 
@@ -159,7 +178,7 @@ def update_graph(graph_type):
     [Input('tabs', 'value')]
 )
 def show_hide_filiere_dropdown(tab):
-    if tab in ['tab-1', 'tab-2', 'tab-5', 'tab-6']:
+    if tab in ['tab-1', 'tab-2', 'tab-5']:
         return {'display': 'block'}
     else:
         return {'display': 'none'}
@@ -185,6 +204,23 @@ def show_hide_motiv_selector(tab):
     else:
         return {'display': 'none'}
     
+
+# Callback for "Conseils pour l'insertion pro" image display based on selected "filiere"
+@app.callback(
+    Output('conseils-insertion-image', 'src'),
+    [Input('filiere-dropdown', 'value')])
+def update_conseils_insertion_image(selected_filiere):
+    # Replace with actual logic to select the appropriate image based on the "filiere"
+    return f'assets/conseils/{selected_filiere}.png'
+
+# Callback for "Projets d'évolution de carrière" image display based on selected "filiere"
+@app.callback(
+    Output('projets-evolution-image', 'src'),
+    [Input('filiere-dropdown', 'value')])
+def update_projets_evolution_image(selected_filiere):
+    # Replace with actual logic to select the appropriate image based on the "filiere"
+    return f'assets/projets/{selected_filiere}.png'
+
     
 if __name__ == '__main__':
     app.run_server(debug=True)
